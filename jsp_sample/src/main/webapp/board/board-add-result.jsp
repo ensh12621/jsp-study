@@ -17,10 +17,18 @@
 		String kind = request.getParameter("kind");
 		String contents = request.getParameter("contents");
 		
-		String query = "INSERT INTO TBL_BOARD(BOARDNO, TITLE, CONTENTS, USERID, CNT, KIND, CDATETIME, UDATETIME) "
-						+ "VALUES (BOARD_SEQ.NEXTVAL, '"+title+"', '"+contents+"', 'user01', 0, "+kind+", sysdate, sysdate)";
+		String sessionId = (String) session.getAttribute("sessionId");
 		
-		//out.println(query);
+		String query = "INSERT INTO TBL_BOARD(BOARDNO, TITLE, CONTENTS, USERID, CNT, KIND, CDATETIME, UDATETIME) "
+						+ "VALUES (BOARD_SEQ.NEXTVAL, '"+title+"', '"+contents+"', '"+sessionId+"', 0, "+kind+", sysdate, sysdate)";
+		
+		String query2 = String.format(
+				"INSERT INTO TBL_BOARD(BOARDNO, TITLE, CONTENTS, USERID, CNT, KIND, CDATETIME, UDATETIME) VALUES " + 
+					"(BOARD_SEQ.NEXTVAL, '%s', '%s', '%s', 0, '%s', sysdate, sysdate)",
+					title, contents, sessionId, kind
+				);
+		
+		out.println(query2);
 		int nUpdated = stmt.executeUpdate(query);
 		%>
 		

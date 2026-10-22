@@ -13,6 +13,7 @@
 	<%
 	Connection conn;
 	Statement stmt = null;
+	Statement stmt2 = null;
 	try {
 		Class.forName("oracle.jdbc.driver.OracleDriver");
 		String db_url = "jdbc:oracle:thin:@localhost:1521:xe";
@@ -20,6 +21,8 @@
 		String db_pw = "test12#$";
 		conn = DriverManager.getConnection(db_url, db_id, db_pw);
 		stmt = conn.createStatement();
+		stmt2 = conn.createStatement(); 
+				
 		System.out.println("DB연결 완료");
 
 	} catch (ClassNotFoundException e) {
