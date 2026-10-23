@@ -13,6 +13,21 @@ table, tr, td, th {
 	padding: 5px 10px;
 	text-align: center;
 }
+
+.paging{
+	display:flex;
+	gap:5px;
+}
+
+.paging a{
+	text-decoration: none;
+}
+
+.paging a.active{
+	font-weight:bold;
+	color:yellowgreen;
+}
+
 </style>
 
 
@@ -22,13 +37,25 @@ table, tr, td, th {
 
 
 	<%@ include file="../db.jsp"%>
+	
 	<%
-	String query = "SELECT * FROM TBL_BOARD";
-	ResultSet rs = stmt.executeQuery(query);
-	String sessionRole = (String) session.getAttribute("sessionRole");
-	String sessionId = (String) session.getAttribute("sessionId");
+		int pageSize = request.getParameter("pageSize") != null ? Integer.parseInt(request.getParameter("pageSize")) : 5;
+		int currentPage = request.getParameter("currentPage") != null ? Integer.parseInt(request.getParameter("currentPage")) : 1;
+		int offset = (currentPage - 1) * pageSize;
+		
+	%>
+	
+	<%
+		String query = "SELECT * FROM TBL_BOARD";
+		
+		query += " OFFSET " + offset +" ROWS FETCH NEXT " + pageSize + " ROWS ONLY ";
+		
+		ResultSet rs = stmt.executeQuery(query);
+		String sessionRole = (String) session.getAttribute("sessionRole");
+		String sessionId = (String) session.getAttribute("sessionId");
 	
 	%>
+	
 
 
 	<div style="display:flex; align-items:center; gap:20px;">
@@ -43,7 +70,6 @@ table, tr, td, th {
 	<hr>
 
 	<h1>게시글 목록</h1>
-	<hr>
 
 	<table>
 		<thead>
@@ -90,6 +116,41 @@ table, tr, td, th {
 		</tbody>
 	</table>
 	
+	<%
+		// paging에 사용할 변수
+		
+		String countQuery = "SELECT COUNT(*) as cnt FROM TBL_BOARD";
+		rs = stmt.executeQuery(countQuery);
+		rs.next();
+		
+		int total = rs.getInt("cnt");
+		int pageList = (int)Math.ceil((double)total / pageSize);
+		
+	%>
+	
+	<div class="paging">
+		<%if(currentPage != 1){ %>
+		<a href="javascript:;" onclick="fnMove('prev')">◀</a>
+		<%} %>
+		
+		<%for(int i=1; i<=pageList; i++){%>
+			<% if(currentPage == i){%>
+				<a href="javascript:;" class="active"><%=i %></a>	
+			<% }else{%>
+				<%-- <a href="?currentPage=<%=i%>&pageSize=<%=pageSize %>" ><%=i %></a> --%>
+				<a href="javascript:;"  onclick="fnLoadPage(<%=i%>)"><%=i %></a>
+			<% }%>
+		
+		<% } %>
+		
+		<%if(currentPage != pageList){ %>
+			<a href="javascript:;" onclick="fnMove('next')">▶</a>
+		<%} %>
+	
+	</div>
+	
+	
+	
 	<div>
 		<button onclick="fnNew()">
 			글쓰기
@@ -115,6 +176,10 @@ table, tr, td, th {
 			location.href = "board-remove-result.jsp?boardNo=" + boardNo;
 		}
 	
+		function fnLoadPage(pageNo){
+			
+			location.href = "?currentPage=" + pageNo;
+		}		
 	</script>	
 
 

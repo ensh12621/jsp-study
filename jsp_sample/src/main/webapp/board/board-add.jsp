@@ -53,6 +53,24 @@
 		document.frm.submit();
 	}
 	
+	function fnReturn(isDuplicated){
+		console.log(isDuplicated);
+		
+		if(!isDuplicated){
+			
+		}else{
+			
+		}
+		
+		document.frm.
+		
+		let form = document.form;
+		if(flg == "N"){
+			form.stuNo.readOnly = true;
+			addFlg = true;
+		}
+	}
+	
 	</script>	
 
 
